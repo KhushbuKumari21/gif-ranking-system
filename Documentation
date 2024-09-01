@@ -1,0 +1,8 @@
+
+### Documentation
+
+1. **Setup Instructions**: The `README.md` provides clear setup instructions, including environment setup and running the applications.
+2. **Usage Guide**: Instructions on how to use both the Flask web application and the Telegram bot.
+3. **Notes**: Important notes on API keys and interaction tracking.
+
+With these improvements and documentation, your project should be well-documented and aligned with the assignment requirements.

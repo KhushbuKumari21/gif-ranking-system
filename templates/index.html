@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 120px);
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .gif-container {
+            margin: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .gif {
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background-color: white;
+            padding: 10px;
+        }
+
+        .gif img {
+            border-radius: 8px;
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+        }
+
+        .gif p {
+            margin: 10px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search for GIFs</h1>
+    <form id="searchForm">
+        <input type="text" name="query" id="searchTerm" placeholder="Enter search term">
+        <button type="submit">Search</button>
+    </form>
+
+    <div class="gif-container" id="gifContainer">
+        <!-- GIFs will be dynamically inserted here -->
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the form from submitting the traditional way
+            const searchTerm = document.getElementById('searchTerm').value;
+            if (!searchTerm) {
+                alert('Please enter a search term.');
+                return;
+            }
+
+            // Fetch new GIFs
+            const response = await fetch(`/search?q=${encodeURIComponent(searchTerm)}`);
+            if (!response.ok) {
+                alert('Failed to fetch GIFs. Please try again later.');
+                return;
+            }
+            const data = await response.json();
+
+            const gifContainer = document.getElementById('gifContainer');
+            gifContainer.innerHTML = ''; // Clear previous GIFs
+
+            if (data.gifs.length === 0) {
+                gifContainer.innerHTML = '<p>No GIFs found for your search term.</p>';
+                return;
+            }
+
+            data.gifs.forEach((gif, index) => {
+                const gifElement = document.createElement('div');
+                gifElement.className = 'gif';
+                gifElement.innerHTML = `
+                    <strong>Rank: ${index + 1}</strong><br>
+                    <h3>${gif.title}</h3>
+                    <a href="/click/${gif.id}"><img src="${gif.images.downsized.url}" alt="${gif.title}"></a><br>
+                    <p>Views: ${gif.views || 0}, Clicks: ${gif.clicks || 0}</p>
+                `;
+                gifContainer.appendChild(gifElement);
+            });
+        });
+    </script>
+</body>
+</html>
